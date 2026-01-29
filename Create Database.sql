@@ -116,3 +116,34 @@ Select * from Courses;
 INSERT INTO Enrollments VALUES 
 (1, 1, 101, 'A', '2023-01-10'), (2, 1, 104, 'B', '2023-01-15'),
 (3, 2, 101, 'A', '2023-01-10'), (4, 3, 102, 'C', '2023-02-01');
+--------------------------------------------------------------------------------------------------
+CREATE TABLE Products1 (
+    ProductID INTEGER PRIMARY KEY,
+    Name TEXT,
+    Category TEXT,
+    Price DECIMAL(10,2),
+    StockQuantity INTEGER
+);
+
+CREATE TABLE Orders1 (
+    OrderID INTEGER PRIMARY KEY,
+    OrderDate DATE,
+    CustomerID INTEGER
+);
+
+CREATE TABLE OrderDetails (
+    DetailID INTEGER PRIMARY KEY,
+    OrderID INTEGER,
+    ProductID INTEGER,
+    Quantity INTEGER,
+    UnitPrice DECIMAL(10,2) -- Price at the time of purchase
+);
+
+INSERT INTO Products1 VALUES 
+(1, 'Phone', 'Electronics', 500, 10), (2, 'Cables', 'Electronics', 20, 100),
+(3, 'Shirt', 'Apparel', 30, 50), (4, 'Desk', 'Furniture', 200, 5);
+
+INSERT INTO Orders1 VALUES (10, '2024-01-01', 1), (11, '2024-01-02', 2);
+
+INSERT INTO OrderDetails VALUES 
+(1, 10, 1, 1, 500), (2, 10, 2, 2, 20), (3, 11, 3, 1, 30);
