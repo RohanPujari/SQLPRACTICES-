@@ -139,8 +139,36 @@ FROM OrderDetails
 --If you want the running total to restart for every new customer or every new month, you add PARTITION BY.
 SELECT  DetailID, Quantity, SUM(Quantity) OVER (Partition by ProductID ORDER BY DetailID) as Running_Total
 FROM OrderDetails;
+--Show DetailID, Quantity, and Previous_Quantity. If there is no previous quantity, show 0.
+SELECT  od.DetailID, od.Quantity, COALESCE(Lag(od.Quantity) OVER (ORDER BY od.DetailID),0) as Previous_Ouantity
+FROM OrderDetails od;
+--Once you see those zeros appearing correctly, do you want to try one last "Boss Battle" where we calculate the 
+--difference between the current and previous quantity? (e.g., Quantity - Previous_Quantity)
+SELECT  od.DetailID, od.Quantity, 
+		COALESCE(Lag(od.Quantity) OVER (ORDER BY od.DetailID),0) as Previous_Ouantity, 
+		od.Quantity - COALESCE(Lag(od.Quantity) OVER (ORDER BY od.DetailID),0) as Difference_Value
+FROM OrderDetails od;
+-- CTE
+WITH VelocityData AS (
+    SELECT DetailID, Quantity, COALESCE(LAG(Quantity) OVER (ORDER BY DetailID), 0) AS Prev
+    FROM OrderDetails
+)
+SELECT 
+    DetailID, Quantity, Prev AS Previous_Quantity,(Quantity - Prev) AS Difference_Value -- Much cleaner!
+FROM VelocityData;
 
+--Analyze the order-to-order momentum for our products. We want to see how much the sales volume is 
+--increasing or decreasing as new orders come in.
+With Velocity AS(
+SELECT DetailID, Quantity, COALESCE(Lag(Quantity) OVER (ORDER BY DetailID),0) as Previous_Ouantity
+FROM OrderDetails
+)
 
-
-
+SELECT DetailID, Quantity, 
+		Previous_Ouantity,
+		CASE 
+        WHEN Previous_Ouantity = 0 THEN 0
+        ELSE (Quantity - Previous_Ouantity) * 100.0 / Previous_Ouantity
+    END AS Growth_Percentage
+FROM Velocity;
 
