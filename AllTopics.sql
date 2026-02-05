@@ -55,7 +55,35 @@ SELECT
     CONCAT('Product: ', ProdName) AS DisplayName
 FROM FULLDATA;
 
+--Can you modify the SELECT above to add one more column that shows the number of characters in each ProdName?
 
+WITH FULLDATA AS (
+    SELECT TRIM(UPPER(ProductName)) AS ProdName
+    FROM Products
+    UNION
+    SELECT TRIM(UPPER(CompName))
+    FROM CompetitorProducts
+)
+SELECT 
+    ROW_NUMBER() OVER( ORDER BY ProdName) AS ProdNum,
+    -- We use CONCAT here, and LOWER to make the name look nicer
+    CONCAT('Product: ', ProdName) AS DisplayName, LENGTH(ProdName) as Char_Len
+FROM FULLDATA;
 
+--Imagine your Products table and CompetitorProducts table have different naming conventions. Your company uses a 3-letter prefix
+--(like FUR for Furniture, ELE for Electronics).
 
+WITH FULLDATA AS (
+    SELECT TRIM(UPPER(ProductName)) AS ProdName
+    FROM Products
+    UNION
+    SELECT TRIM(UPPER(CompName))
+    FROM CompetitorProducts
+)
+SELECT 
+    ROW_NUMBER() OVER( ORDER BY ProdName) AS ProdNum,
+    -- We use CONCAT here, and LOWER to make the name look nicer
+    CONCAT('Product: ', ProdName) AS DisplayName, LENGTH(ProdName) as Char_Len,
+    SUBSTRING(ProdName, 1, 3) as CategoryCode
+FROM FULLDATA;
 
