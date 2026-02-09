@@ -87,3 +87,22 @@ SELECT
     SUBSTRING(ProdName, 1, 3) as CategoryCode
 FROM FULLDATA;
 
+--Using the OrderDetails table, find the Quantity of each row AND the Quantity of the row immediately following it (ordered by DetailID).
+Select * from OrderDetails
+
+SELECT 
+    Quantity, 
+    LEAD(Quantity) OVER(ORDER BY DetailID) AS Next_Quantity
+FROM OrderDetails;
+
+--Target: '   USER@GMAIL.COM  ' $\rightarrow$ 'user@gmail.com'
+--Write the SELECT statement using TRIM and LOWER.
+
+SELECT LOWER(EMAIL) as EmailID
+FROM Customers
+--THe TRIM will remove all the spaces if there are any.
+
+--Find OrderIDs in New_Orders but NOT in Processed_Orders.
+SELECT ProductName FROM Storefront
+Except
+SELECT ProductName FROM Warehouse 
