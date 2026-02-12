@@ -94,3 +94,30 @@ JOIN Salaries es ON e.EmpID = es.EmpID
 JOIN Employee m ON e.ManagerID = m.EmpID
 JOIN Salaries ms ON m.EmpID = ms.EmpID
 WHERE es.Amount > ms.Amount; -- The "Salary Gap" Filter
+
+--The HR department wants to know who the most recently hired employee is in each department.
+WITH JoinDate as (
+Select e.EmpName, d.DeptName, s.EffectiveDate, Row_NUMBER() Over(Partition by d.DeptName Order by s.EffectiveDate DESC) as Rows1
+From  EMPLOYEE e
+Left Join Departments d
+ON e.DeptID = d.DeptID
+Left JOIN Salaries s
+ON e.EmpID = s.EmpID
+)
+Select * from JoinDate
+Where Rows1 = 1;
+
+--The board wants a "Diversity & Budget" report. They need to see the employee names, their salaries, and a Salary Category.
+--;Write a query using your Employees and Salaries tables that creates a new column called Budget_Status based on these rules:
+--If the salary is above 100,000, label it 'Executive Budget'.
+--If the salary is between 80,000 and 100,000, label it 'Standard Budget'.
+--Anything else is 'Growth Budget'.
+Select EmpName, Amount, Case 
+When Amount > 100000 THEN 'Executive Budget'
+WHEN Amount >= 80000 THEN 'Standard Budget'
+Else 'Growth Budget'	
+END as Salary_Category
+From Salaries s
+JOIN EMPLOYEE e
+ON e.EMPID = s.EMPID
+
